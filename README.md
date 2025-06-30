@@ -70,5 +70,5 @@ rm login.db
 python3 server.py
 ```
 
-3. Test the website
+3. Test the website<br>
 Click around. It's a pretty basic site right now. The only user in the database has the username 'genius' and the password 'revealed'. If you login with anything else, you'll notice the page will give you an error message. If you use this password, you'll notice it doesn't behave as you'd expect. That's where cookies/sessions come in. We will discuss how to set this up in training.
