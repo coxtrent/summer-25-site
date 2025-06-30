@@ -1,0 +1,71 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+    color: #222;
+    min-height: 100vh;
+    padding: 40px;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #333;
+    margin-bottom: 16px;
+}
+
+/* Paragraphs */
+p {
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+/* Links */
+a {
+    color: #ff7e5f;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #feb47b;
+}
+
+/* Buttons */
+button, .btn {
+    background: #ff7e5f;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+button:hover, .btn:hover {
+    background: #feb47b;
+}
+
+/* Card Example */
+.card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .card {
+        padding: 12px;
+    }
+}
