@@ -69,3 +69,31 @@ button:hover, .btn:hover {
         padding: 12px;
     }
 }
+
+.login-button {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    z-index: 1000;
+    background: #ff7e5f;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.login-button:hover {
+    background: #feb47b;
+}
+
+@media (max-width: 600px) {
+    .login-button {
+        top: 10px;
+        right: 10px;
+        padding: 8px 14px;
+        font-size: 0.95rem;
+    }
+}

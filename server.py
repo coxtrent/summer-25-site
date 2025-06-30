@@ -8,6 +8,9 @@ conn = sqlite3.connect('login.db')
 
 ROUTES = {}
 
+#TODO: Add session cookies for user authentication
+
+
 def route(path):
     def decorator(func):
         ROUTES[path] = func
@@ -23,6 +26,19 @@ def get_file(filename, content_type="text/html"):
         return f"HTTP/1.1 200 OK\nContent-Type: {content_type}\n\n{content}"
     except Exception:
         return "HTTP/1.1 500 INTERNAL SERVER ERROR\n\nError loading file: " + filename
+    
+def get_image(filename, content_type="image/png"):
+    """Serve binary image files (e.g., .ico, .png, .jpg)."""
+    try:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, filename)
+        with open(file_path, "rb") as f:
+            content = f.read()
+        header = f"HTTP/1.1 200 OK\nContent-Type: {content_type}\n\n".encode("utf-8")
+        return header + content
+    except Exception:
+        return b"HTTP/1.1 500 INTERNAL SERVER ERROR\n\nError loading file: " + filename.encode("utf-8")
+
 
 def parse_form_data(request):
     """Extracts form data from the HTTP request body and returns a dict."""
@@ -40,35 +56,50 @@ def hash_password(password):
     hashed = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100_000)
     return salt.hex(), hashed.hex()
 
-def hash_password(password,salt):
+def hash_password_with_salt(password,salt):
     """Hash the password with the given salt."""
     hashed = hashlib.pbkdf2_hmac('sha256', password.encode(), bytes.fromhex(salt), 100_000)
     return hashed.hex()
 
 # PAGE ROUTES 
+
+# This route serves the home page
 @route("/")
 def home():
     return get_file("index.html")
 
-
+# This route serves the about page
 @route("/about")
 def about():
     return get_file("about.html")
 
-
+# This route serves the login page
 @route("/login")
 def login_page():
     return get_file("login.html")
 
+
+# ROUTES FOR STATIC FILES
+
+# This route serves the CSS file
 @route("/style.css")
 def css():
     return get_file("style.css", content_type="text/css")
 
+# This route serves the JavaScript file
 @route("/script.js")
 def js():
     return get_file("script.js", content_type="application/javascript")
 
-# API ROUTES
+@route("/favicon.ico")
+def favicon():
+    return get_image("favicon.ico", content_type="image/x-icon")
+
+
+# REST API ROUTES
+
+
+# This route serves login requests
 @route("/api/login")
 def login(request):
     params = parse_form_data(request)
@@ -87,16 +118,18 @@ def login(request):
     if not result:
         return "HTTP/1.1 401 UNAUTHORIZED\n\nLogin failed: Invalid username or password."
     salt, stored_hash = result
-    password_hash = hash_password(password, salt)
+    password_hash = hash_password_with_salt(password, salt)
     if password_hash != stored_hash:
         return "HTTP/1.1 401 UNAUTHORIZED\n\nLogin failed: Invalid username or password."
     return "HTTP/1.1 200 OK\n\nLogin successful!"
     
+# This route will log the user out, but we will add cookies/sessions for this to work.
 @route("/api/logout")
 def logout():
     # In a real application, you would handle session management here
     return "HTTP/1.1 200 OK\n\nYou have been logged out successfully."
 
+# This route adds a new user to the database
 @route("/api/create_user")
 def create_user(request):
     # Extract body from the request (after double newline)
@@ -117,16 +150,17 @@ def create_user(request):
         return "HTTP/1.1 400 BAD REQUEST\n\nMissing required fields."
 
     cursor = conn.cursor()
-    
+    salt, password_hash = hash_password(password)
     try:
-        cursor.execute("INSERT INTO users (username, password, first_name, last_name) VALUES (?, ?, ?, ?)",
-                       (username, password, first_name, last_name))
+        cursor.execute("INSERT INTO users (username, salt, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?)",
+                       (username, salt, password_hash, first_name, last_name))
         conn.commit()
         return "HTTP/1.1 201 CREATED\n\nUser created successfully."
     except sqlite3.IntegrityError:
         return "HTTP/1.1 409 CONFLICT\n\nUsername already exists."
 
-# ROUTER
+# Router function
+# This decides which function to call based on the request route
 def handle_request(request):
     try:
         path = request.split(" ")[1]
@@ -159,7 +193,10 @@ def start_server(host='localhost', port=8080):
         print(f"\nReceived request:\n{request}")
 
         response = handle_request(request)
-        client_socket.sendall(response.encode('utf-8'))
+        if isinstance(response, bytes):
+            client_socket.sendall(response)
+        else:
+            client_socket.sendall(response.encode('utf-8'))
         client_socket.close()
 
 if __name__ == "__main__":

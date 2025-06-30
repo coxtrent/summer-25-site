@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>HTML 5 Boilerplate</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
   </head>
   <body>
     <h1>Login To The Hidden Genius Project</h1>
@@ -15,31 +16,17 @@
   <button type="submit">Login</button>
   <div id="error-message" style="color:red;"></div>
 </form>
-<script>
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-  e.preventDefault(); // Prevent default form submission
-
-  const form = e.target;
-  const formData = new FormData(form);
-  const params = new URLSearchParams(formData);
-
-  const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: params
-  });
-
-  const text = await response.text();
-
-  if (text.includes('Login successful')) {
-    // On success, redirect to the index page
-    window.location = '/';
-  } else {
-    // On failure, show error message
-    document.getElementById('error-message').textContent = 'Login failed. Please try again.';
-  }
-});
-</script>
+<h2>Don't Have an Account? Create One Here</h2>
+<form id="create-account-form" method="POST" action="/api/create_user">
+    <input name="new_username" type="text" placeholder="Username" required />
+    <input name="new_password" type="password" placeholder="Password" required />
+    <input name="confirm_password" type="password" placeholder="Confirm Password" required />
+    <input name="first_name" type="text" placeholder="First Name" required />
+    <input name="last_name" type="text" placeholder="Last Name" required />
+    <button type="submit">Create Account</button>
+    <div id="create-error-message" style="color:red;"></div>
+</form>
+<script src="script.js"></script>
     <p><a href="/">Go back to home</a></p>
     <p><a href="/about">Click here to learn more</a></p>
   </body>
