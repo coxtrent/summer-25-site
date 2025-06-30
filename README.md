@@ -4,13 +4,13 @@ A lightweight example website for the Hidden Genius Project's final website proj
 
 ## Table of Contents
 
-- [Installation + GitHub Refresher](#installation--github-refresher)
+- [Installation + Terminal Refresher](#installation--terminal-refresher)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
 
 
-## Installation + GitHub Refresher
+## Installation + Terminal Refresher
 **Open VS Code, Press Cmd+Shift+P, and type "Shell Command: Install 'code' command in PATH".**<br>
 Click that, follow any prompts, and now you can open VS Code from any terminal. More on that later.
 
